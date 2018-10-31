@@ -1,0 +1,9 @@
+Interface.c
+>compiler=C
+>memtype=cmm main ram compact
+>optimize=-O2
+>-Wall
+>-fno-exceptions
+>-Dprintf=__simple_printf
+>defs::-std=c99
+>BOARD::QUICKSTART
