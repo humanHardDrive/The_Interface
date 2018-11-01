@@ -1,3 +1,4 @@
 
 *.elf
 *.binary
+*.cog

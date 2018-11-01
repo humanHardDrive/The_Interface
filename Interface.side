@@ -5,6 +5,8 @@ i2c_master_cog.cogc
 i2c_slave_cog.cogc
 uart_cog.cogc
 uart_interface.h
+spi_interface.h
+configuration.h
 >compiler=C
 >memtype=cmm main ram compact
 >optimize=-O2
