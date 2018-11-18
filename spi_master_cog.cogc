@@ -1,1 +1,8 @@
+#include "spi_interface.h"
 
+#include <propeller.h>
+
+_NATIVE
+void main()
+{
+}

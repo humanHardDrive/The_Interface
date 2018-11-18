@@ -9,11 +9,6 @@ enum
   INTF_I2C_SLAVE,
   INTF_I2C_MASTER,
   INTF_UART
-};  
-
-typedef struct InterfaceRegisters
-{
-  unsigned char InterfaceType[6];
 };
 
 #endif

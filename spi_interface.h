@@ -2,14 +2,20 @@
 #define __SPI_INTERFACE_H__
 
 #include "configuration.h"
+#include <stdint.h>
 
-#define SPI_MEMORY_SIZE   512
+typedef enum
+{
+  CS_PIN = 0,
+  CLK_PIN,
+  MOSI_PIN,
+  MISO_PIN,
+  NUM_SPI_PINS
+}SPI_PIN;  
 
 typedef struct
 {
-  unsigned char mem[SPI_MEMORY_SIZE];
-  
-  InterfaceRegisters* intfreg;
-};  
+  uint8_t pins[NUM_SPI_PINS];
+}SPI_INTERFACE;  
 
 #endif
