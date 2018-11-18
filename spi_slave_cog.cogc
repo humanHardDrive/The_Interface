@@ -75,16 +75,20 @@ _NATIVE
 void main(SPI_INTERFACE* pInterface)
 {
   UpdateInterfacePins(pInterface);
+  UpdateProcessingMode(pInterface);
 
   l_LastCLKState = (_INA & _BV(l_LocalCLKPin)) ? 1 : 0;
 
   while(1)
   {
-    if(_INA & _BV(l_LocalCSPin))
-    {
-      
-    }
+    if(!(_INA & _BV(l_LocalCSPin)))
+      Processing();
     else
+    {
+      //When the chip select pin is de-asserted
+      //Update things from memory
       UpdateInterfacePins(pInterface);
+      UpdateProcessingMode(pInterface);
+    }
   }
 }
