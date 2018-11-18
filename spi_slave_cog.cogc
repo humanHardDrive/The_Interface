@@ -1,8 +1,90 @@
 #include "spi_interface.h"
+#include "pins.h"
 
 #include <propeller.h>
+#include <string.h>
+
+static _COGMEM uint8_t l_LocalMISOPin, l_LocalMOSIPin, l_LocalCLKPin, l_LocalCSPin;
+
+static _COGMEM uint8_t l_LastCLKState;
+static _COGMEM uint8_t l_ShiftOutData, l_ShiftInData;
+
+static _COGMEM void (*Processing)(void);
 
 _NATIVE
-void main()
+void Mode0()
 {
+}
+
+_NATIVE
+void Mode1()
+{
+}
+
+_NATIVE
+void Mode2()
+{
+}
+
+_NATIVE
+void Mode3()
+{
+}
+
+_NATIVE
+void UpdateInterfacePins(SPI_INTERFACE* pInterface)
+{
+  //Make local copies of each of the pins
+  l_LocalMISOPin = pInterface->pins[MISO_PIN];
+  l_LocalMOSIPin = pInterface->pins[MOSI_PIN];
+  l_LocalCLKPin = pInterface->pins[CLK_PIN];
+  l_LocalCSPin = pInterface->pins[CS_PIN];
+
+  //Setup the pins
+  sbi(_DIRA, l_LocalMISOPin);
+  cbi(_DIRA, l_LocalMOSIPin);
+  cbi(_DIRA, l_LocalCLKPin);
+  cbi(_DIRA, l_LocalCSPin);
+}
+
+_NATIVE
+void UpdateProcessingMode(SPI_INTERFACE* pInterface)
+{
+  switch(pInterface->mode)
+  {
+    default:
+    case 0:
+    Processing = Mode0;
+    break;
+
+    case 1:
+    Processing = Mode1;
+    break;
+
+    case 2:
+    Processing = Mode2;
+    break;
+
+    case 3:
+    Processing = Mode3;
+    break;
+  }
+}
+
+_NATIVE
+void main(SPI_INTERFACE* pInterface)
+{
+  UpdateInterfacePins(pInterface);
+
+  l_LastCLKState = (_INA & _BV(l_LocalCLKPin)) ? 1 : 0;
+
+  while(1)
+  {
+    if(_INA & _BV(l_LocalCSPin))
+    {
+      
+    }
+    else
+      UpdateInterfacePins(pInterface);
+  }
 }

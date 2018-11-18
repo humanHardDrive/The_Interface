@@ -16,6 +16,7 @@ typedef enum
 typedef struct
 {
   uint8_t pins[NUM_SPI_PINS];
+  uint8_t mode;
 }SPI_INTERFACE;  
 
 #endif
