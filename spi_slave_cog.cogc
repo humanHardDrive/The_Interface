@@ -8,12 +8,34 @@ static _COGMEM uint8_t l_LocalMISOPin, l_LocalMOSIPin, l_LocalCLKPin, l_LocalCSP
 
 static _COGMEM uint8_t l_LastCLKState;
 static _COGMEM uint8_t l_ShiftOutData, l_ShiftInData;
+static _COGMEM uint8_t l_BitCount, l_ParseState;
 
 static _COGMEM void (*Processing)(void);
 
 _NATIVE
 void Mode0()
 {
+  uint8_t CurrentCLKState = (_INA & _BV(l_LocalCLKPin)) ? 1 : 0;
+
+  if(CurrentCLKState && !l_LastCLKState)
+  {
+    if(_INA & _BV(l_LocalMOSIPin))
+      l_ShiftInData |= 0x01;
+
+    l_ShiftInData <<= 1;
+  }
+  else if(!CurrentCLKState && l_LastCLKState)
+  {
+    l_ShiftOutData >>= 0x01;
+    l_BitCount++;
+  }
+  else if(!CurrentCLKState && !l_LastCLKState)
+  {
+    if(l_ShiftOutData & 0x01)
+      sbi(_OUTA, l_LocalMISOPin);
+    else
+      cbi(_OUTA, l_LocalMISOPin);
+  }  
 }
 
 _NATIVE
@@ -72,17 +94,27 @@ void UpdateProcessingMode(SPI_INTERFACE* pInterface)
 }
 
 _NATIVE
+void ProcessCommand(uint8_t command)
+{
+}
+
+_NATIVE
 void main(SPI_INTERFACE* pInterface)
 {
   UpdateInterfacePins(pInterface);
   UpdateProcessingMode(pInterface);
 
   l_LastCLKState = (_INA & _BV(l_LocalCLKPin)) ? 1 : 0;
+  l_BitCount = 0;
+  l_ParseState = 0;
 
   while(1)
   {
     if(!(_INA & _BV(l_LocalCSPin)))
+    {
       Processing();
+      l_LastCLKState = (_INA & _BV(l_LocalCLKPin)) ? 1 : 0;
+    }
     else
     {
       //When the chip select pin is de-asserted
